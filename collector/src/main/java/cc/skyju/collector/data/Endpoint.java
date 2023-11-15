@@ -11,5 +11,5 @@ public class Endpoint {
     private String serviceName;
     private RequestMethod method;
     private String uri;
-    private String responseType;
+    private ResolvedType responseType;
 }

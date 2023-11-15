@@ -1,23 +1,46 @@
 package cc.skyju.collector.helpers;
 
+import cc.skyju.collector.data.ResolvedType;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import com.github.javaparser.resolution.types.ResolvedType;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class JParserHelper {
-    public static String getMethodType(MethodDeclaration methodDeclaration) {
+    public static ResolvedType getMethodType(MethodDeclaration methodDeclaration) {
         Type type = methodDeclaration.getType(); // Get the type of the method
-        ResolvedType resolvedType = type.resolve(); // Resolve the type
-        ResolvedReferenceType resolvedReferenceType = resolvedType.asReferenceType(); // Cast to ResolvedReferenceType
-        return resolvedReferenceType.getQualifiedName();
+        return resolveType(type);
+    }
+
+    private static ResolvedType resolveType(Type type) {
+        if (type.isVoidType()) {
+            return new ResolvedType(true, false, "", new ArrayList<>());
+        }
+        if (type.isPrimitiveType()) {
+            return new ResolvedType(false, true, type.asPrimitiveType().asString(), new ArrayList<>());
+        }
+        if (type.isClassOrInterfaceType()) {
+            ClassOrInterfaceType classOrInterfaceType = type.asClassOrInterfaceType();
+            String qualifiedName = classOrInterfaceType.resolve().asReferenceType().getQualifiedName();
+            ResolvedType resolvedType = new ResolvedType(false, false, qualifiedName, new ArrayList<>());
+            if (classOrInterfaceType.getTypeArguments().isPresent()) { // Check if the type is a generic type
+                List<Type> typeArguments = classOrInterfaceType.getTypeArguments().get(); // Get the type arguments of the generic type
+                for (int i = 0; i < typeArguments.size(); i++) { // Iterate over the type arguments
+                    resolvedType.getGenericName().add(resolveType(typeArguments.get(i)));
+                }
+            }
+            return resolvedType;
+        }
+        throw new RuntimeException("Unsupported type: " + type);
     }
 
     public static @Nullable String getAnnotationFieldString(NormalAnnotationExpr normalAnnotationExpr, String fieldName) {
