@@ -1,14 +1,20 @@
 package cc.skyju.collector.helpers;
 
-import cc.skyju.collector.data.ResolvedType;
+import cc.skyju.collector.data.CustomField;
+import cc.skyju.collector.data.CustomResolvedType;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionFieldDeclaration;
+import com.github.javaparser.utils.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -16,31 +22,52 @@ import java.util.List;
 import java.util.Optional;
 
 public class JParserHelper {
-    public static ResolvedType getMethodType(MethodDeclaration methodDeclaration) {
+    public static CustomResolvedType getMethodType(MethodDeclaration methodDeclaration) {
         Type type = methodDeclaration.getType(); // Get the type of the method
-        return resolveType(type);
+        return resolveType(type.resolve());
     }
 
-    private static ResolvedType resolveType(Type type) {
-        if (type.isVoidType()) {
-            return new ResolvedType(true, false, "", new ArrayList<>());
+    private static CustomResolvedType resolveType(ResolvedType type) {
+        if (type.isVoid()) {
+            return new CustomResolvedType(true, false, "",
+                    new ArrayList<>(), new ArrayList<>());
         }
-        if (type.isPrimitiveType()) {
-            return new ResolvedType(false, true, type.asPrimitiveType().asString(), new ArrayList<>());
+        if (type.isPrimitive()) {
+            return new CustomResolvedType(false, true, type.asPrimitive().getBoxTypeQName(),
+                    new ArrayList<>(), new ArrayList<>());
         }
-        if (type.isClassOrInterfaceType()) {
-            ClassOrInterfaceType classOrInterfaceType = type.asClassOrInterfaceType();
-            String qualifiedName = classOrInterfaceType.resolve().asReferenceType().getQualifiedName();
-            ResolvedType resolvedType = new ResolvedType(false, false, qualifiedName, new ArrayList<>());
-            if (classOrInterfaceType.getTypeArguments().isPresent()) { // Check if the type is a generic type
-                List<Type> typeArguments = classOrInterfaceType.getTypeArguments().get(); // Get the type arguments of the generic type
-                for (Type typeArgument : typeArguments) { // Iterate over the type arguments
-                    resolvedType.getGenericName().add(resolveType(typeArgument));
-                }
+        if (type.isReferenceType()) {
+            ResolvedReferenceType referenceType = type.asReferenceType();
+            String qualifiedName = referenceType.getQualifiedName();
+            CustomResolvedType customResolvedType = new CustomResolvedType(false, false,
+                    qualifiedName, resolveFields(referenceType), new ArrayList<>());
+            for (Pair<ResolvedTypeParameterDeclaration, ResolvedType> pair : referenceType.getTypeParametersMap()) {
+                customResolvedType.getGenericName().add(resolveType(pair.b));
             }
-            return resolvedType;
+            return customResolvedType;
         }
         throw new RuntimeException("Unsupported type: " + type);
+    }
+
+    private static List<CustomField> resolveFields(ResolvedReferenceType referenceType) {
+        List<CustomField> fields = new ArrayList<>();
+        for (ResolvedReferenceType ancestor : referenceType.getAllAncestors()) {
+            // Loop through all the declared fields of the ancestor
+            inflateField(fields, ancestor);
+        }
+        inflateField(fields, referenceType);
+        return fields;
+    }
+
+    private static void inflateField(List<CustomField> fields, ResolvedReferenceType ancestor) {
+        for (ResolvedFieldDeclaration field : ancestor.getDeclaredFields()) {
+            if (field instanceof ReflectionFieldDeclaration) {
+                continue;
+            }
+            String fieldName = field.getName();
+            CustomResolvedType fieldType = resolveType(field.getType());
+            fields.add(new CustomField(fieldName, fieldType));
+        }
     }
 
     public static @Nullable String getAnnotationFieldString(NormalAnnotationExpr normalAnnotationExpr, String fieldName) {

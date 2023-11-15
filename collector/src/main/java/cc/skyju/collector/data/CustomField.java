@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Endpoint {
-    private String serviceName;
-    private RequestMethod method;
-    private String uri;
-    private CustomResolvedType responseType;
+public class CustomField {
+    private String name;
+    private CustomResolvedType type;
 }
