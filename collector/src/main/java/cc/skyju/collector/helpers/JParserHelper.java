@@ -34,8 +34,8 @@ public class JParserHelper {
             ResolvedType resolvedType = new ResolvedType(false, false, qualifiedName, new ArrayList<>());
             if (classOrInterfaceType.getTypeArguments().isPresent()) { // Check if the type is a generic type
                 List<Type> typeArguments = classOrInterfaceType.getTypeArguments().get(); // Get the type arguments of the generic type
-                for (int i = 0; i < typeArguments.size(); i++) { // Iterate over the type arguments
-                    resolvedType.getGenericName().add(resolveType(typeArguments.get(i)));
+                for (Type typeArgument : typeArguments) { // Iterate over the type arguments
+                    resolvedType.getGenericName().add(resolveType(typeArgument));
                 }
             }
             return resolvedType;
