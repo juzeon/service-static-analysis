@@ -1,14 +1,25 @@
 package cc.skyju.collector.helpers;
 
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.github.javaparser.resolution.types.ResolvedType;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class AnnotationHelper {
+public class JParserHelper {
+    public static String getMethodType(MethodDeclaration methodDeclaration) {
+        Type type = methodDeclaration.getType(); // Get the type of the method
+        ResolvedType resolvedType = type.resolve(); // Resolve the type
+        ResolvedReferenceType resolvedReferenceType = resolvedType.asReferenceType(); // Cast to ResolvedReferenceType
+        return resolvedReferenceType.getQualifiedName();
+    }
+
     public static @Nullable String getAnnotationFieldString(NormalAnnotationExpr normalAnnotationExpr, String fieldName) {
         NodeList<MemberValuePair> pairs = normalAnnotationExpr.getPairs();
         // Iterate over the pairs and print their names and values
