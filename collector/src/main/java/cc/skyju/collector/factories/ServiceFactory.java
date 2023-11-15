@@ -21,17 +21,21 @@ public class ServiceFactory {
             }
             File[] files = subFile.listFiles();
             assert files != null;
+            List<File> sourceRoots = new ArrayList<>();
             for (File f : files) {
                 final File javaDirFile = Paths.get(f.getAbsolutePath(), "main", "java").toFile();
                 if (javaDirFile.isDirectory()) {
-                    SourceRoot sr = new SourceRoot(javaDirFile.toPath());
-                    sr.getParserConfiguration()
-                            .setSymbolResolver(new JavaSymbolSolver(TypeSolverFactory
-                                    .getCombinedTypeSolver(javaDirFile.getAbsolutePath())));
-                    sr.tryToParse();
-                    services.add(new Service(subFile.getName(), javaDirFile.getAbsolutePath(), sr.getCompilationUnits(),
-                            new ArrayList<>()));
+                    sourceRoots.add(javaDirFile);
                 }
+            }
+            for (File sourceRoot : sourceRoots) {
+                SourceRoot sr = new SourceRoot(sourceRoot.toPath());
+                sr.getParserConfiguration()
+                        .setSymbolResolver(new JavaSymbolSolver(TypeSolverFactory
+                                .getCombinedTypeSolver(sourceRoots.stream().map(File::getAbsolutePath).toList())));
+                sr.tryToParse();
+                services.add(new Service(subFile.getName(), sourceRoot.getAbsolutePath(), sr.getCompilationUnits(),
+                        new ArrayList<>()));
             }
         }
         return services;

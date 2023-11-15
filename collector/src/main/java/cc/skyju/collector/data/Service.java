@@ -13,6 +13,6 @@ public class Service {
     private String name;
     private String sourceRoot;
     @ToString.Exclude
-    private List<CompilationUnit> cuList;
+    private transient List<CompilationUnit> cuList;
     private List<Endpoint> dependencies;
 }

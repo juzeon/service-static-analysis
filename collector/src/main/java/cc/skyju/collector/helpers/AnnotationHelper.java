@@ -16,6 +16,9 @@ public class AnnotationHelper {
             if (!pair.getName().asString().equals(fieldName)) {
                 continue;
             }
+            if (pair.getValue().isLiteralStringValueExpr()) {
+                return pair.getValue().asLiteralStringValueExpr().getValue();
+            }
             return pair.getValue().toString();
         }
         return null;

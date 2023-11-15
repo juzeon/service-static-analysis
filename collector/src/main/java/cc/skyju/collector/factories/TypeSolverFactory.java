@@ -5,11 +5,16 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSol
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
+import java.util.List;
+
 public class TypeSolverFactory {
-    public static TypeSolver getCombinedTypeSolver(String sourceRoot) {
-        return new CombinedTypeSolver(
-                new JavaParserTypeSolver(sourceRoot),
+    public static TypeSolver getCombinedTypeSolver(List<String> sourceRoots) {
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(
                 new ReflectionTypeSolver()
         );
+        for (String sourceRoot : sourceRoots) {
+            combinedTypeSolver.add(new JavaParserTypeSolver(sourceRoot));
+        }
+        return combinedTypeSolver;
     }
 }

@@ -23,8 +23,8 @@ public class FeignClientCollector {
                 }
                 NormalAnnotationExpr feignClientAnnotation = (NormalAnnotationExpr)
                         classOrInterfaceDeclaration.getAnnotationByName("FeignClient").get();
-                String serviceName = Objects.requireNonNull(AnnotationHelper.getAnnotationField(
-                        feignClientAnnotation, "name")).toString();
+                String serviceName = Objects.requireNonNull(AnnotationHelper.getAnnotationFieldString(
+                        feignClientAnnotation, "name"));
                 for (MethodDeclaration methodDeclaration : classOrInterfaceDeclaration.getMethods()) {
                     Endpoint endpoint = getEndpointFromMethod(serviceName, methodDeclaration);
                     if (endpoint != null) {
