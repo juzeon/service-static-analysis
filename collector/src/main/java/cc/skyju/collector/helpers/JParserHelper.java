@@ -2,15 +2,14 @@ package cc.skyju.collector.helpers;
 
 import cc.skyju.collector.data.CustomField;
 import cc.skyju.collector.data.CustomResolvedType;
+import cc.skyju.collector.factories.CustomResolvedTypeFactory;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionFieldDeclaration;
@@ -51,7 +50,7 @@ public class JParserHelper {
 
     private static List<CustomField> resolveFields(ResolvedReferenceType referenceType) {
         List<CustomField> fields = new ArrayList<>();
-        for (ResolvedReferenceType ancestor : referenceType.getAllAncestors()) {
+        for (ResolvedReferenceType ancestor : referenceType.getAllClassesAncestors()) {
             // Loop through all the declared fields of the ancestor
             inflateField(fields, ancestor);
         }
@@ -59,14 +58,24 @@ public class JParserHelper {
         return fields;
     }
 
-    private static void inflateField(List<CustomField> fields, ResolvedReferenceType ancestor) {
-        for (ResolvedFieldDeclaration field : ancestor.getDeclaredFields()) {
+    private static void inflateField(List<CustomField> fields, ResolvedReferenceType referenceType) {
+        if (referenceType.getTypeDeclaration().isPresent() && referenceType.getTypeDeclaration().get().isEnum()) {
+            System.out.println(referenceType);
+            ResolvedEnumDeclaration red = (ResolvedEnumDeclaration) referenceType.getTypeDeclaration().get();
+            List<ResolvedEnumConstantDeclaration> constants = red.getEnumConstants();
+            for (ResolvedEnumConstantDeclaration constant : constants) {
+                // use String for enum constant
+                fields.add(new CustomField(constant.getName(),
+                        CustomResolvedTypeFactory.getByQualifiedName("java.lang.String")));
+            }
+            return;
+        }
+        for (ResolvedFieldDeclaration field : referenceType.getDeclaredFields()) {
             if (field instanceof ReflectionFieldDeclaration) {
                 continue;
             }
-            String fieldName = field.getName();
             CustomResolvedType fieldType = resolveType(field.getType());
-            fields.add(new CustomField(fieldName, fieldType));
+            fields.add(new CustomField(field.getName(), fieldType));
         }
     }
 
