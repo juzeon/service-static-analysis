@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class CustomResolvedTypeFactory {
     public static CustomResolvedType getByQualifiedName(String qualifiedName) {
-        return new CustomResolvedType(false, false,
+        return new CustomResolvedType(false, false, false,
                 qualifiedName, new ArrayList<>(), new ArrayList<>());
     }
 }

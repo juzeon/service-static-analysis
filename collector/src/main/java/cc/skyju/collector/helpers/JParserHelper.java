@@ -12,6 +12,7 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.resolution.types.ResolvedTypeVariable;
 import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionFieldDeclaration;
 import com.github.javaparser.utils.Pair;
 
@@ -28,22 +29,31 @@ public class JParserHelper {
 
     private static CustomResolvedType resolveType(ResolvedType type) {
         if (type.isVoid()) {
-            return new CustomResolvedType(true, false, "",
+            return new CustomResolvedType(true, false, false, "",
                     new ArrayList<>(), new ArrayList<>());
         }
         if (type.isPrimitive()) {
-            return new CustomResolvedType(false, true, type.asPrimitive().getBoxTypeQName(),
+            return new CustomResolvedType(false, true, false, type.asPrimitive().getBoxTypeQName(),
                     new ArrayList<>(), new ArrayList<>());
         }
         if (type.isReferenceType()) {
             ResolvedReferenceType referenceType = type.asReferenceType();
             String qualifiedName = referenceType.getQualifiedName();
-            CustomResolvedType customResolvedType = new CustomResolvedType(false, false,
+            CustomResolvedType customResolvedType = new CustomResolvedType(false, false, false,
                     qualifiedName, resolveFields(referenceType), new ArrayList<>());
             for (Pair<ResolvedTypeParameterDeclaration, ResolvedType> pair : referenceType.getTypeParametersMap()) {
                 customResolvedType.getGenericName().add(resolveType(pair.b));
             }
             return customResolvedType;
+        }
+        if (type.isTypeVariable()) {
+            ResolvedTypeVariable resolvedTypeVariable = type.asTypeVariable();
+            // Get the corresponding type parameter declaration
+            ResolvedTypeParameterDeclaration typeParameterDeclaration = resolvedTypeVariable.asTypeParameter();
+            CustomResolvedType typ = CustomResolvedTypeFactory.
+                    getByQualifiedName(typeParameterDeclaration.getQualifiedName());
+            typ.setIsGeneric(true);
+            return typ;
         }
         throw new RuntimeException("Unsupported type: " + type);
     }

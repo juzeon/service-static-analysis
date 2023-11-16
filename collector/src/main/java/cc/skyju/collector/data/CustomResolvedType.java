@@ -12,6 +12,7 @@ import java.util.List;
 public class CustomResolvedType {
     private Boolean isVoid;
     private Boolean isPrimitive;
+    private Boolean isGeneric;
     private String baseName;
     private List<CustomField> fields;
     private List<CustomResolvedType> genericName;
