@@ -70,7 +70,6 @@ public class JParserHelper {
 
     private static void inflateField(List<CustomField> fields, ResolvedReferenceType referenceType) {
         if (referenceType.getTypeDeclaration().isPresent() && referenceType.getTypeDeclaration().get().isEnum()) {
-            System.out.println(referenceType);
             ResolvedEnumDeclaration red = (ResolvedEnumDeclaration) referenceType.getTypeDeclaration().get();
             List<ResolvedEnumConstantDeclaration> constants = red.getEnumConstants();
             for (ResolvedEnumConstantDeclaration constant : constants) {
