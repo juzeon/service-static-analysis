@@ -7,30 +7,30 @@ import (
 type ZeroTestDataGenerator struct {
 }
 
-func (z ZeroTestDataGenerator) GenerateEnum(enums []string) string {
+func (z ZeroTestDataGenerator) GenerateEnum(enums []string) any {
 	return ""
 }
 
-func (z ZeroTestDataGenerator) GenerateCharacter() rune {
+func (z ZeroTestDataGenerator) GenerateCharacter() any {
 	return 0
 }
 
-func (z ZeroTestDataGenerator) GenerateInteger() int {
+func (z ZeroTestDataGenerator) GenerateInteger() any {
 	return 0
 }
 
-func (z ZeroTestDataGenerator) GenerateString() string {
+func (z ZeroTestDataGenerator) GenerateString() any {
 	return ""
 }
 
-func (z ZeroTestDataGenerator) GenerateFloat() float64 {
+func (z ZeroTestDataGenerator) GenerateFloat() any {
 	return 0.0
 }
 
-func (z ZeroTestDataGenerator) GenerateTime() time.Time {
+func (z ZeroTestDataGenerator) GenerateTime() any {
 	return time.Time{}
 }
 
-func (z ZeroTestDataGenerator) GenerateBoolean() bool {
+func (z ZeroTestDataGenerator) GenerateBoolean() any {
 	return false
 }

@@ -5,17 +5,16 @@ import (
 	"github.com/life4/genesis/slices"
 	"mock-server/model"
 	"mock-server/util"
-	"time"
 )
 
 type TestDataGenerator interface {
-	GenerateInteger() int
-	GenerateString() string
-	GenerateFloat() float64
-	GenerateTime() time.Time
-	GenerateBoolean() bool
-	GenerateCharacter() rune
-	GenerateEnum(enums []string) string
+	GenerateInteger() any
+	GenerateString() any
+	GenerateFloat() any
+	GenerateTime() any
+	GenerateBoolean() any
+	GenerateCharacter() any
+	GenerateEnum(enums []string) any
 }
 
 func GenerateRawData(generator TestDataGenerator, customType model.CustomType) (any, error) {
