@@ -44,18 +44,6 @@ func GenerateRawData(generator TestDataGenerator, customType model.CustomType) (
 	}
 }
 
-type Options struct {
-	ListLength        int // -1 0 +
-	MapLength         int //-1 0 +
-	TestDataGenerator TestDataGenerator
-}
-
-var DefaultOptions = Options{
-	ListLength:        3,
-	MapLength:         3,
-	TestDataGenerator: nil,
-}
-
 func GenerateCustomTypeInstance(customType model.CustomType, options Options) (any, error) {
 	return generateCustomTypeInstance(customType, options, nil)
 }

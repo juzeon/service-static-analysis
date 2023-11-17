@@ -13,9 +13,8 @@ func (o TestUnresolvable) HandleHTTP(param HTTPParam) {
 	if err != nil {
 		panic(err)
 	}
-	option := generator.DefaultOptions
-	option.TestDataGenerator = generator.RandomTestDataGenerator{}
-	ins, err := generator.GenerateCustomTypeInstance(endpoint.ResponseType, option)
+	ins, err := generator.GenerateCustomTypeInstance(endpoint.ResponseType,
+		generator.NewOptions(generator.WithTestDataGenerator(generator.RandomTestDataGenerator{})))
 	if err != nil {
 		panic(err)
 	}

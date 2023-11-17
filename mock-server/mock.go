@@ -58,6 +58,8 @@ func (o *Mock) getTestStrategyHTTP() strategy.TestHTTP {
 	switch o.TestType {
 	case model.TestTypeUnresolvable:
 		return &strategy.TestUnresolvable{}
+	case model.TestTypeWrongType:
+		return &strategy.TestWrongType{}
 	default:
 		panic("unknown testType")
 	}
