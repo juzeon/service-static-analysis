@@ -57,6 +57,12 @@ func (o HTTPParam) MustRespondWithJSON(statusCode int, data any) {
 		panic(err)
 	}
 }
+func (o HTTPParam) MustWriteString(str string) {
+	_, err := o.Writer.Write([]byte(str))
+	if err != nil {
+		panic(err)
+	}
+}
 
 type TCPParam struct {
 	Conn net.Conn
