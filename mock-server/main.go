@@ -11,7 +11,7 @@ func main() {
 	if len(os.Args) >= 2 {
 		configPath = os.Args[1]
 	}
-	mock, err := NewMock(model.TestTypeUnresolvableResponseBody, configPath)
+	mock, err := NewMock(model.TestTypeUnresolvable, configPath)
 	if err != nil {
 		panic(err)
 	}

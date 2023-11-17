@@ -4,9 +4,9 @@ type TestType int
 
 const (
 	_ = TestType(iota)
-	TestTypeUnresolvableResponseBody
-	TestTypeErrorDataFieldType
-	TestTypeDataFieldTooLarge
+	TestTypeUnresolvable
+	TestTypeWrongType
+	TestTypeTooLarge
 )
 
 func (o TestType) GetTestStrategyLayer() TestStrategyLayer {

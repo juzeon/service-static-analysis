@@ -56,8 +56,8 @@ func (o *Mock) Run(addr string) error {
 }
 func (o *Mock) getTestStrategyHTTP() strategy.TestStrategyHTTP {
 	switch o.TestType {
-	case model.TestTypeUnresolvableResponseBody:
-		return &strategy.TestUnresolvableResponseBody{}
+	case model.TestTypeUnresolvable:
+		return &strategy.TestUnresolvable{}
 	default:
 		panic("unknown testType")
 	}

@@ -5,10 +5,10 @@ import (
 	"mock-server/generator"
 )
 
-type TestUnresolvableResponseBody struct {
+type TestUnresolvable struct {
 }
 
-func (o *TestUnresolvableResponseBody) HandleHTTP(param HTTPParam) {
+func (o *TestUnresolvable) HandleHTTP(param HTTPParam) {
 	_, endpoint, err := param.MatchServiceEndpoint()
 	if err != nil {
 		panic(err)
