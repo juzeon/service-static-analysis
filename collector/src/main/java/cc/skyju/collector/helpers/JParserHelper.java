@@ -73,9 +73,8 @@ public class JParserHelper {
             ResolvedEnumDeclaration red = (ResolvedEnumDeclaration) referenceType.getTypeDeclaration().get();
             List<ResolvedEnumConstantDeclaration> constants = red.getEnumConstants();
             for (ResolvedEnumConstantDeclaration constant : constants) {
-                // use String for enum constant
                 fields.add(new CustomField(constant.getName(),
-                        CustomResolvedTypeFactory.getByQualifiedName("java.lang.String")));
+                        CustomResolvedTypeFactory.getByQualifiedName("__enum__")));
             }
             return;
         }

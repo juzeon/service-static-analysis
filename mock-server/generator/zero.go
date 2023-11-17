@@ -7,6 +7,10 @@ import (
 type ZeroTestDataGenerator struct {
 }
 
+func (z ZeroTestDataGenerator) GenerateEnum(enums []string) string {
+	return ""
+}
+
 func (z ZeroTestDataGenerator) GenerateCharacter() rune {
 	return 0
 }

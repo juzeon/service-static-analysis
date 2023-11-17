@@ -9,6 +9,10 @@ import (
 type RandomTestDataGenerator struct {
 }
 
+func (r RandomTestDataGenerator) GenerateEnum(enums []string) string {
+	return enums[util.RandIntInclusive(0, len(enums)-1)]
+}
+
 func (r RandomTestDataGenerator) GenerateCharacter() rune {
 	return rune(util.RandStringRunes(1)[0])
 }

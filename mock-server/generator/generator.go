@@ -15,10 +15,16 @@ type TestDataGenerator interface {
 	GenerateTime() time.Time
 	GenerateBoolean() bool
 	GenerateCharacter() rune
+	GenerateEnum(enums []string) string
 }
 
-func GenerateRawData(generator TestDataGenerator, baseName string) (any, error) {
-	switch baseName {
+func GenerateRawData(generator TestDataGenerator, customType model.CustomType) (any, error) {
+	if len(customType.Fields) > 0 && customType.Fields[0].Type.BaseName == "__enum__" {
+		return generator.GenerateEnum(slices.Map(customType.Fields, func(el model.CustomField) string {
+			return el.Name
+		})), nil
+	}
+	switch customType.BaseName {
 	case "java.lang.String":
 		return generator.GenerateString(), nil
 	case "java.lang.Integer", "java.math.BigDecimal", "java.math.BigInteger":
@@ -35,7 +41,7 @@ func GenerateRawData(generator TestDataGenerator, baseName string) (any, error) 
 	case "java.lang.Byte", "java.lang.Short", "java.lang.Long":
 		return generator.GenerateInteger(), nil
 	default:
-		return nil, errors.New("baseName is not raw type: " + baseName)
+		return nil, errors.New("baseName is not raw type: " + customType.BaseName)
 	}
 }
 
@@ -95,7 +101,7 @@ func generateCustomTypeInstance(customType model.CustomType, options Options,
 		}
 		return jsonObject, nil
 	}
-	if len(customType.Fields) > 0 {
+	if len(customType.Fields) > 0 && customType.Fields[0].Type.BaseName != "__enum__" {
 		jsonObject := make(model.JSONObject)
 		useGenericIndex := 0
 		for _, field := range customType.Fields {
@@ -129,7 +135,7 @@ func generateCustomTypeInstance(customType model.CustomType, options Options,
 		}
 		return instance, nil
 	}
-	instance, err := GenerateRawData(options.TestDataGenerator, customType.BaseName)
+	instance, err := GenerateRawData(options.TestDataGenerator, customType)
 	if err != nil {
 		return nil, err
 	}
