@@ -10,10 +10,10 @@ import (
 	"regexp"
 )
 
-type TestStrategyHTTP interface {
+type TestHTTP interface {
 	HandleHTTP(param HTTPParam)
 }
-type TestStrategyTCP interface {
+type TestTCP interface {
 	HandleTCP(param TCPParam)
 }
 

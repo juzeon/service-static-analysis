@@ -10,7 +10,7 @@ const (
 )
 
 func (o TestType) GetTestStrategyLayer() TestStrategyLayer {
-	if o <= 3 {
+	if o <= 10 {
 		return TestStrategyLayerHTTP
 	}
 	return TestStrategyLayerTCP

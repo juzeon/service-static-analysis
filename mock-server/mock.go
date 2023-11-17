@@ -54,7 +54,7 @@ func (o *Mock) Run(addr string) error {
 		panic("not defined layer")
 	}
 }
-func (o *Mock) getTestStrategyHTTP() strategy.TestStrategyHTTP {
+func (o *Mock) getTestStrategyHTTP() strategy.TestHTTP {
 	switch o.TestType {
 	case model.TestTypeUnresolvable:
 		return &strategy.TestUnresolvable{}

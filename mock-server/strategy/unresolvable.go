@@ -8,7 +8,7 @@ import (
 type TestUnresolvable struct {
 }
 
-func (o *TestUnresolvable) HandleHTTP(param HTTPParam) {
+func (o TestUnresolvable) HandleHTTP(param HTTPParam) {
 	_, endpoint, err := param.MatchServiceEndpoint()
 	if err != nil {
 		panic(err)
