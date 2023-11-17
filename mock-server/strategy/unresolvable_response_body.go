@@ -1,6 +1,6 @@
 package strategy
 
-import "log/slog"
+import "mock-server/generator"
 
 type TestUnresolvableResponseBody struct {
 }
@@ -10,5 +10,11 @@ func (o *TestUnresolvableResponseBody) HandleHTTP(param HTTPParam) {
 	if err != nil {
 		panic(err)
 	}
-	slog.Info("Handle", "endpoint", endpoint)
+	option := generator.DefaultOptions
+	option.TestDataGenerator = generator.RandomTestDataGenerator{}
+	ins, err := generator.GenerateCustomTypeInstance(endpoint.ResponseType, option)
+	if err != nil {
+		panic(err)
+	}
+	param.MustRespondWithJSON(200, ins)
 }
