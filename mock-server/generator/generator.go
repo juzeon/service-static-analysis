@@ -100,7 +100,7 @@ func generateCustomTypeInstance(customType model.CustomType, options Options,
 		useGenericIndex := 0
 		for _, field := range customType.Fields {
 			if field.Type.IsGeneric {
-				if useGenericIndex < len(customType.GenericName) {
+				if useGenericIndex >= len(customType.GenericName) {
 					return nil, errors.New("not enough generic name for generic fields")
 				}
 				instance, err := generateCustomTypeInstance(field.Type, options, &customType.GenericName[useGenericIndex])

@@ -25,6 +25,7 @@ func NewMock(testType model.TestType, configPath string) (*Mock, error) {
 	if err != nil {
 		return nil, err
 	}
+	mock.Services.SortEndpoints()
 	return &mock, nil
 }
 

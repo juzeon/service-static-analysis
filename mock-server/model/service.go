@@ -1,5 +1,10 @@
 package model
 
+import (
+	"github.com/life4/genesis/slices"
+	"regexp"
+)
+
 type Service struct {
 	Name         string     `json:"name"`
 	SourceRoot   string     `json:"source_root"`
@@ -28,3 +33,15 @@ type CustomType struct {
 }
 
 type ServiceList []Service
+
+func (s *ServiceList) SortEndpoints() {
+	r := regexp.MustCompile(`\{.*}`)
+	for i := range *s {
+		(*s)[i].Dependencies = slices.SortBy((*s)[i].Dependencies, func(endpoint Endpoint) int {
+			if r.MatchString(endpoint.Uri) {
+				return 1
+			}
+			return -1
+		})
+	}
+}

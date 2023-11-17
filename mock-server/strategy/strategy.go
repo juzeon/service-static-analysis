@@ -27,8 +27,8 @@ func (o HTTPParam) MatchServiceEndpoint() (model.Service, model.Endpoint, error)
 	var resEndpoint model.Endpoint
 	resService, err := slices.Find(o.Services, func(service model.Service) bool {
 		endpoint, err := slices.Find(service.Dependencies, func(endpoint model.Endpoint) bool {
-			uri := regexp.MustCompile(`\{.*?}`).ReplaceAllString(endpoint.Uri, `(.*?)`)
-			if regexp.MustCompile("(?m)^"+uri).MatchString(o.Request.RequestURI) && endpoint.Method == o.Request.Method {
+			uri := regexp.MustCompile(`\{.*?}`).ReplaceAllString(endpoint.Uri, `([^/]+)`)
+			if regexp.MustCompile("(?m)^"+uri+"$").MatchString(o.Request.RequestURI) && endpoint.Method == o.Request.Method {
 				slog.Info("Match endpoint", "endpoint", endpoint.Uri)
 				return true
 			}
