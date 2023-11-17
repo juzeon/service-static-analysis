@@ -1,7 +1,6 @@
 package generator
 
 import (
-	"math/rand"
 	"mock-server/util"
 	"time"
 )
@@ -26,11 +25,11 @@ func (r RandomTestDataGenerator) GenerateString() any {
 }
 
 func (r RandomTestDataGenerator) GenerateFloat() any {
-	return rand.Float64()*100 - 50
+	return util.RandFloat64(-999, 999)
 }
 
 func (r RandomTestDataGenerator) GenerateTime() any {
-	return time.Now().Add(time.Hour * time.Duration(util.RandIntInclusive(0, 500)-250))
+	return time.Now().Add(time.Hour * time.Duration(util.RandIntInclusive(-500, 500)))
 }
 
 func (r RandomTestDataGenerator) GenerateBoolean() any {
