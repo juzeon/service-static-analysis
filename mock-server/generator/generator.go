@@ -18,7 +18,7 @@ type TestDataGenerator interface {
 	PostProcess(customType model.CustomType, data any) any
 }
 
-func GenerateRawData(generator TestDataGenerator, customType model.CustomType) (any, error) {
+func generateRawData(generator TestDataGenerator, customType model.CustomType) (any, error) {
 	if len(customType.Fields) > 0 && customType.Fields[0].Type.BaseName == "__enum__" {
 		return generator.GenerateEnum(slices.Map(customType.Fields, func(el model.CustomField) string {
 			return el.Name
@@ -126,7 +126,7 @@ func generateCustomTypeInstance(customType model.CustomType, options Options,
 		}
 		return instance, nil
 	}
-	instance, err := GenerateRawData(options.TestDataGenerator, customType)
+	instance, err := generateRawData(options.TestDataGenerator, customType)
 	if err != nil {
 		return nil, err
 	}
