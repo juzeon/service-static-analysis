@@ -1,7 +1,15 @@
 package generator
 
+import (
+	"mock-server/model"
+)
+
 type WrongTypeTestDataGenerator struct {
 	BaseGenerator TestDataGenerator
+}
+
+func (w WrongTypeTestDataGenerator) PostProcess(customType model.CustomType, data any) any {
+	return data
 }
 
 func (w WrongTypeTestDataGenerator) GenerateInteger() any {

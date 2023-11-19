@@ -1,10 +1,15 @@
 package generator
 
 import (
+	"mock-server/model"
 	"time"
 )
 
 type ZeroTestDataGenerator struct {
+}
+
+func (z ZeroTestDataGenerator) PostProcess(customType model.CustomType, data any) any {
+	return data
 }
 
 func (z ZeroTestDataGenerator) GenerateEnum(enums []string) any {

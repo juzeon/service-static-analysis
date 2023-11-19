@@ -1,11 +1,16 @@
 package generator
 
 import (
+	"mock-server/model"
 	"mock-server/util"
 	"time"
 )
 
 type RandomTestDataGenerator struct {
+}
+
+func (r RandomTestDataGenerator) PostProcess(customType model.CustomType, data any) any {
+	return data
 }
 
 func (r RandomTestDataGenerator) GenerateEnum(enums []string) any {

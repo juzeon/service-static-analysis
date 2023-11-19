@@ -15,6 +15,7 @@ type TestDataGenerator interface {
 	GenerateBoolean() any
 	GenerateCharacter() any
 	GenerateEnum(enums []string) any
+	PostProcess(customType model.CustomType, data any) any
 }
 
 func GenerateRawData(generator TestDataGenerator, customType model.CustomType) (any, error) {
@@ -23,25 +24,28 @@ func GenerateRawData(generator TestDataGenerator, customType model.CustomType) (
 			return el.Name
 		})), nil
 	}
+	var result any
 	switch customType.BaseName {
 	case "java.lang.String":
-		return generator.GenerateString(), nil
+		result = generator.GenerateString()
 	case "java.lang.Integer", "java.math.BigDecimal", "java.math.BigInteger":
-		return generator.GenerateInteger(), nil
+		result = generator.GenerateInteger()
 	case "java.lang.Float", "java.lang.Double":
-		return generator.GenerateFloat(), nil
+		result = generator.GenerateFloat()
 	case "java.lang.Boolean":
-		return generator.GenerateBoolean(), nil
+		result = generator.GenerateBoolean()
 	case "java.time.LocalDateTime", "java.time.DateTime",
 		"java.util.Date", "java.sql.Date", "java.sql.Timestamp":
-		return generator.GenerateTime(), nil
+		result = generator.GenerateTime()
 	case "java.lang.Character":
-		return generator.GenerateCharacter(), nil
+		result = generator.GenerateCharacter()
 	case "java.lang.Byte", "java.lang.Short", "java.lang.Long":
-		return generator.GenerateInteger(), nil
+		result = generator.GenerateInteger()
 	default:
 		return nil, errors.New("baseName is not raw type: " + customType.BaseName)
 	}
+	result = generator.PostProcess(customType, result)
+	return result, nil
 }
 
 func GenerateCustomTypeInstance(customType model.CustomType, options Options) (any, error) {
